@@ -39,10 +39,23 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Necessário um objeto Usuario"
+        description: "Campos obrigatórios: username, email e password"
         required: true
         schema:
-          $ref: "#/definitions/User"
+            type: object
+            properties:
+              username:
+                type: "string"
+              email:
+                type: "string"
+              password:
+                type: "string"
+              birthdate:
+                type: "string"
+                format: "date"
+              sex:
+                type: "string"
+                example: "M | F"
       responses:
         201:
           description: "Usuario Criado"
@@ -100,9 +113,21 @@ paths:
         200:
           description: "Operacão Realizada com Sucesso"
           schema:
-            $ref: "#/definitions/User"
-        204:
-          description: "Não a conteudo para ser entregue"
+              type: object
+              properties:
+                id:
+                  type: "integer"
+                  format: "int64"
+                username:
+                  type: "string"
+                email:
+                  type: "string"
+                birthdate:
+                  type: "string"
+                  format: "date"
+                sex:
+                  type: "string"
+                  example: "M | F"
         400:
           description: "Invalid ID supplied"
         404:
@@ -152,7 +177,12 @@ paths:
         description: "Necessário um objeto User"
         required: true
         schema:
-          $ref: "#/definitions/login"
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
       responses:
         200:
           description: "successful operation"
@@ -166,7 +196,10 @@ paths:
               format: "date-time"
               description: "date in UTC when token expires"
           schema:
-            type: "string"
+            type: object
+            properties:
+              token:
+                type: string
         400:
           description: "Invalid username/password supplied"
       x-swagger-router-controller: "User"
@@ -212,7 +245,35 @@ paths:
         description: "Necessário um objeto Evento"
         required: true
         schema:
-          $ref: "#/definitions/Event"
+            type: object
+            properties:
+              title:
+                type: string
+              startDate:
+                type: string
+                format: 'date-time'
+              endDate:
+                type: string
+                format: 'date-time'
+              street:
+                type: string
+              neighborhood:
+                type: string
+              city:
+                type: string
+              referencePoint:
+                type: string
+              description:
+                type: string
+              eventTypeId:
+                type: "integer"
+                format: "int64"
+              ownerId:
+                type: "integer"
+                format: "int64"
+              status:
+                type: string
+              
       responses:
         201:
           description: "Evento Criado"
@@ -227,9 +288,7 @@ paths:
       operationId: "updateEvent"
       consumes:
       - "application/json"
-      - "application/xml"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
@@ -237,8 +296,40 @@ paths:
         description: ""
         required: true
         schema:
-          $ref: "#/definitions/Event"
+            type: object
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              title:
+                type: string
+              startDate:
+                type: string
+                format: date-time
+              endDate:
+                type: string
+                format: date-time
+              street:
+                type: string
+              neighborhood:
+                type: string
+              city:
+                type: string
+              referencePoint:
+                type: string
+              description:
+                type: string
+              eventTypeId:
+                type: "integer"
+                format: "int64"
+              status:
+                type: string
+              
       responses:
+        200:
+          description: "Sucesso"
+          schema:
+            $ref: "#/definitions/Event"
         400:
           description: "Invalid ID supplied"
         404:
@@ -267,8 +358,6 @@ paths:
           description: "Operacão Realizada com Sucesso"
           schema:
             $ref: "#/definitions/Event"
-        204:
-          description: "Invalid ID supplied"
         400:
           description: "Invalid ID supplied"
         404:
@@ -294,6 +383,8 @@ paths:
         type: "integer"
         format: "int64"
       responses:
+        200: 
+          description: "Sucesso"
         400:
           description: "Invalid ID supplied"
         404:
@@ -343,6 +434,107 @@ paths:
         404:
           description: "Evento não Encontrado"
       x-swagger-router-controller: "Event"
+      
+  /partipant:
+    post:
+      tags:
+      - "participant"
+      summary: "Cadastrar um novo participante no evento"
+      description: ""
+      operationId: "addParticipant"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Campos obrigatórios: username, email e password"
+        required: true
+        schema:
+            type: object
+            properties:
+              userId:
+                type: "integer"
+                format: "int64"
+              eventoId:
+                type: "integer"
+                format: "int64"
+              subscriptionDate:
+                type: "string"
+                format: date-time
+      responses:
+        201:
+          description: "Sucesso"
+          schema:
+            $ref: "#/definitions/User"
+        405:
+          description: "Entrada Invalida"
+      x-swagger-router-controller: "Participant"
+
+  /participant/{userId}:
+    get:
+      tags:
+      - "participant"
+      summary: "Enconte um usuario pelo seu ID"
+      description: ""
+      operationId: "getParticipantById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "Id do usuario que quer retorno"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Operacão Realizada com Sucesso"
+          schema:
+              type: object
+              properties:
+                participantId:
+                  type: "integer"
+                  format: "int64"
+                eventoId:
+                  type: "integer"
+                  format: "int64"
+                subscriptionDate:
+                  type: "string"
+                  format: date-time
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Usuario não Encontrado"
+      x-swagger-router-controller: "Participant"
+    delete:
+      tags:
+      - "participant"
+      summary: "Deletar Usuario"
+      description: ""
+      operationId: "deleteParticipant"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "api_key"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "userId"
+        in: "path"
+        description: "Id do Usuario que deseja deletar"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "sucesso"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Usuario não Encontrado"
+      x-swagger-router-controller: "Participant"      
   /mensagem:
     post:
       tags:
@@ -360,7 +552,16 @@ paths:
         description: "Necessário um objeto Evento"
         required: true
         schema:
-          $ref: "#/definitions/Message"
+            type: object
+            properties:
+              messageDate:
+                type: string
+                format: 'date-time'
+              message:
+                type: string
+              participantId:
+                type: "integer"
+                format: "int64"
       responses:
         201:
           description: "Mensagem Criada"
@@ -383,14 +584,80 @@ paths:
         description: ""
         required: true
         schema:
-          $ref: "#/definitions/Message"
+            type: object
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              messageDate:
+                type: string
+                format: 'date-time'
+              message:
+                type: string
+              participantId:
+                type: "integer"
+                format: "int64"
       responses:
+        200:
+          description: "sucesso"
+          schema:
+            type: object
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              messageDate:
+                type: string
+                format: 'date-time'
+              message:
+                type: string
+              participantId:
+                type: "integer"
+                format: "int64"
         400:
           description: "Invalid ID supplied"
         404:
           description: "Mensagem não encontrada"
         405:
           description: "Validation exception"
+      x-swagger-router-controller: "Mensagem"
+  /mensages/{participantId}:
+    get:
+      tags:
+      - "mensagem"
+      summary: "Retorna todas as mensagens do participante do evento"
+      description: "Retorna apenas o tipo de evento do mesmo id enviado"
+      operationId: "getMensagemById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "participantId"
+        in: "path"
+        description: "Id do Evento que quer retorno"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Sucesso"
+          schema:
+            type: object
+            properties:
+              id:
+                type: "integer"
+                format: "int64"
+              messageDate:
+                type: string
+                format: 'date-time'
+              message:
+                type: string
+              participantId:
+                type: "integer"
+                format: "int64"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Mensagem não Encontrada"
       x-swagger-router-controller: "Mensagem"
   /mensagem/{msgId}:
     delete:
@@ -459,13 +726,13 @@ definitions:
       message:
         type: "string"
     example:
-      date: "2000-01-23T04:56:07.000+00:00"
+      date: "2019-11-07T18:46:29.648Z"
       Id: 0
       message: "message"
       participant:
-        registrationDate: "2000-01-23T04:56:07.000+00:00"
+        registrationDate: "2019-11-07T18:46:29.648Z"
         event:
-          endDate: "2000-01-23T04:56:07.000+00:00"
+          endDate: "2019-11-07T18:46:29.648Z"
           city: "city"
           street: "street"
           description: "description"
@@ -482,7 +749,7 @@ definitions:
             id: 0
             email: "email"
             username: "username"
-          startDate: "2000-01-23T04:56:07.000+00:00"
+          startDate: "2019-11-07T18:46:29.648Z"
           referencePoint: "referencePoint"
           status: true
         user:
@@ -512,9 +779,9 @@ definitions:
     xml:
       name: "Participant"
     example:
-      registrationDate: "2000-01-23T04:56:07.000+00:00"
+      registrationDate: "2019-11-07T18:46:29.648Z"
       event:
-        endDate: "2000-01-23T04:56:07.000+00:00"
+        endDate: "2019-11-07T18:46:29.648Z"
         city: "city"
         street: "street"
         description: "description"
@@ -531,7 +798,7 @@ definitions:
           id: 0
           email: "email"
           username: "username"
-        startDate: "2000-01-23T04:56:07.000+00:00"
+        startDate: "2019-11-07T18:46:29.648Z"
         referencePoint: "referencePoint"
         status: true
       user:
@@ -595,6 +862,19 @@ definitions:
     - "street"
     - "title"
     properties:
+      participant:
+        type: "array"
+        items:
+          type: object
+          properties:
+            id:
+              type: "integer"
+              format: "int64"
+            username:
+              type: string
+            subscriptionDate:
+              type: string
+              format: date-time
       id:
         type: "integer"
         format: "int64"
@@ -624,7 +904,14 @@ definitions:
       status:
         type: "boolean"
     example:
-      endDate: "2000-01-23T04:56:07.000+00:00"
+      participant:
+        [{
+          id: 0,
+          username: "nome",
+          subscriptionDate: "2019-11-07T18:46:29.648Z"
+        }
+          ]
+      endDate: "2019-11-07T18:46:29.648Z"
       city: "city"
       street: "street"
       description: "description"
@@ -641,7 +928,7 @@ definitions:
         id: 0
         email: "email"
         username: "username"
-      startDate: "2000-01-23T04:56:07.000+00:00"
+      startDate: "2019-11-07T18:46:29.648Z"
       referencePoint: "referencePoint"
       status: true
 externalDocs:
