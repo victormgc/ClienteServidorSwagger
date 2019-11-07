@@ -272,7 +272,7 @@ paths:
                 type: "integer"
                 format: "int64"
               status:
-                type: string
+                type: boolean
               
       responses:
         201:
@@ -323,7 +323,7 @@ paths:
                 type: "integer"
                 format: "int64"
               status:
-                type: string
+                type: boolean
               
       responses:
         200:
